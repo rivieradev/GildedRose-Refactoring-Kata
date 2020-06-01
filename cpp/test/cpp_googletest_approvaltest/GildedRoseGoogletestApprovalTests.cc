@@ -15,19 +15,32 @@ std::ostream& operator<<(std::ostream& os, const Item& obj)
 
 TEST(GildedRoseApprovalTests, VerifyCombinations) {
 
-    std::vector<string> names { "Foo" };
-    std::vector<int> sellIns { 1 };
-    std::vector<int> qualities { 1 };
-
-    auto f = [](string name, int sellIn, int quality) {
-        vector<Item> items = {Item(name, sellIn, quality)};
-        GildedRose app(items);
+    std::vector<Item> items;
+    items.push_back(Item("+5 Dexterity Vest", 10, 20));
+    items.push_back(Item("Aged Brie", 2, 0));
+    items.push_back(Item("Elixir of the Mongoose", 5, 7));
+    items.push_back(Item("Sulfuras, Hand of Ragnaros", 0, 80));
+    items.push_back(Item("Sulfuras, Hand of Ragnaros", -1, 80));
+    items.push_back(Item("Backstage passes to a TAFKAL80ETC concert", 15, 20));
+    items.push_back(Item("Backstage passes to a TAFKAL80ETC concert", 10, 49));
+    items.push_back(Item("Backstage passes to a TAFKAL80ETC concert", 5, 49));
+    // this Conjured item doesn't yet work properly
+    items.push_back(Item("Conjured Mana Cake", 3, 6));
+    GildedRose app(items);
+ 
+    std::stringstream out_stream;
+ 
+    for (int day = 0; day <= 30; day++) {
+        out_stream << "-------- day " << day << " --------" << '\n';
+        out_stream << "name, sellIn, quality" << '\n';
+        for (const auto item : items) {
+            out_stream << item << '\n';
+        }
+        out_stream << '\n';
+ 
         app.updateQuality();
-        return items[0];
-    };
-
-    ApprovalTests::CombinationApprovals::verifyAllCombinations(
-            f,
-            names, sellIns, qualities);
+    }
+ 
+    ApprovalTests::Approvals::verify(out_stream.str());
 
 }
